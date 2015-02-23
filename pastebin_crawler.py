@@ -1,74 +1,100 @@
 #!/usr/bin/env python3
 
+import re
 import time
+
 from pyquery import PyQuery
 
-term_color = {
-   "PURPLE" : '\033[95m',
-   "CYAN" : '\033[96m',
-   "DARKCYAN" : '\033[36m',
-   "BLUE" : '\033[94m',
-   "GREEN" : '\033[92m',
-   "YELLOW" : '\033[93m',
-   "RED" : '\033[91m',
-   "BOLD" : '\033[1m',
-   "UNDERLINE" : '\033[4m',
-   "END" : '\033[0m'
-}
+class Logger:
 
-password_keys = [ "password", "Password", "pass", "Pass", "pswd", "Pswd", "passwd", "Passwd" ]
-password_assign = [ " =", "=", " :", ":" ]
+    shell_mod = {
+       'PURPLE' : '\033[95m',
+       'CYAN' : '\033[96m',
+       'DARKCYAN' : '\033[36m',
+       'BLUE' : '\033[94m',
+       'GREEN' : '\033[92m',
+       'YELLOW' : '\033[93m',
+       'RED' : '\033[91m',
+       'BOLD' : '\033[1m',
+       'UNDERLINE' : '\033[4m',
+       'RESET' : '\033[0m'
+    }
 
-pastebin_url = "http://pastebin.com"
-pastebin_archive = pastebin_url + "/archive"
+    def log ( self, message, is_bold = False, color = False ):
+        prefix = ''
+        if is_bold:
+            prefix += self.shell_mod['BOLD']
+        if color:
+            prefix += self.shell_mod[color.upper()]
 
-def info_msg ( message, is_bold = False, color = False ):
-	message = "-" + message
-	if is_bold:
-		message = term_color["BOLD"] + message + term_color["END"]
-	if color:
-		message = term_color[color] + message + term_color["END"]
-	print ( message )
+        suffix = self.shell_mod['RESET']
 
-def get_pastes ():
-	info_msg ( "Getting pastes", True )
-	return PyQuery ( url=pastebin_archive )(".maintable img").next("a")
+        message = prefix + message + suffix
+        print ( message )
 
-def check_paste ( paste_id ):
-	paste_url = pastebin_url + paste_id
-	content = PyQuery ( url=paste_url )("#paste_code").text()
-	for key in password_keys:
-		for assign in password_assign:
-			if key + assign in content:
-				info_msg ("This paste contains 'password': " + paste_url, True, "RED" )
-				save_result ( paste_url )
-				return
-	info_msg ( "This paste doesn't contain 'password': " + paste_url )
+class Crawler:
 
-def save_result ( paste_url ):
-	clipboard = open ( "interesting_pastes.txt", "a" )
-	clipboard.write ( time.strftime("%Y/%m/%d %H:%M:%S") + " - " + paste_url + "\n" )
-	clipboard.close()
+    pastebin_url = 'http://pastebin.com'
+    pastes_url = pastebin_url + '/archive'
 
-def main ( intervall ):
-	start_id = "NOSTARTID"
-	next_start_id = ""
-	while True:
-		pastes = get_pastes()
-		counter = 1
-		for paste in pastes:
-			paste_id = PyQuery ( paste ).attr("href")
-			if counter == 1:
-				next_start_id = paste_id
-			if paste_id == start_id:
-				break
-			check_paste ( paste_id )
-			counter += 1
-		start_id = next_start_id
-		time.sleep(intervall)
+    prev_checked_ids = []
+    new_checked_ids = []
 
-main(1)
+    regexes = (
+        r'(password|pass|pswd|passwd)\s?(:|=)' # Passwords
+    )
 
+    def get_pastes ( self ):
+        Logger ().log ( 'Getting pastes', True )
+        page = PyQuery ( url = self.pastes_url )
+        page_html = page.html ()
 
+        if re.match ( r'Pastebin\.com - Access Denied Warning', page_html, re.IGNORECASE ):
+            return False
+        else:
+            return page('.maintable img').next('a')
 
+    def check_paste ( self, paste_id ):
+        paste_url = self.pastebin_url + paste_id
+        paste_txt = PyQuery ( url = paste_url )('#paste_code').text()
 
+        for regex in self.regexes:
+
+            if re.match ( regex, paste_txt, re.IGNORECASE ):
+                Logger ().log ( 'Found a matching paste: ' + paste_url, True, 'CYAN' )
+                self.save_result ( paste_url )
+                return True
+            else:
+                Logger ().log ( 'Not matching paste: ' + paste_url )
+                return False
+
+    def save_result ( self, paste_url ):
+        with open ( 'matching_pastes.txt', 'a' ) as matching:
+            matching.write ( time.strftime ( '%Y/%m/%d %H:%M:%S' ) + ' - ' + paste_url + '\n' )
+
+    def start ( self, refresh_rate = 30, delay = 1, ban_wait = 5 ):
+        while True:
+            pastes = self.get_pastes ()
+
+            if pastes:
+                for paste in pastes:
+                    paste_id = PyQuery ( paste ).attr('href')
+                    self.new_checked_ids.append ( paste_id )
+                    if paste_id not in self.prev_checked_ids:
+                        self.check_paste ( paste_id )
+                        time.sleep ( delay )
+
+                self.prev_checked_ids = self.new_checked_ids
+                self.new_checked_ids = []
+
+                time.sleep ( refresh_rate )
+            else:
+                Logger ().log ( 'Damn! It looks like you have been banned (probably temporarily)', True, 'RED' )
+                for n in range ( 0, ban_wait ):
+                    Logger ().log ( 'Please wait ' + str ( ban_wait - n ) + ' minute' + ( 's' if ( ban_wait - n ) > 1 else '' ) )
+                    time.sleep ( 60 )
+
+try:
+    Crawler ().start ()
+except KeyboardInterrupt:
+    Logger ().log ( 'Bye! Hope you found what you were looking for :)', True );
