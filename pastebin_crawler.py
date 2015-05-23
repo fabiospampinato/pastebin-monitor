@@ -75,7 +75,8 @@ class Crawler:
         with open ( file, 'a' ) as matching:
             matching.write ( self.get_timestamp() + ' - ' + paste_url + '\n' )
 
-    def start ( self, refresh_rate = 30, delay = 0.1, ban_wait = 5 ):
+    def start ( self, refresh_rate = 30, delay = 0.1, ban_wait = 5, flush_after_x_refreshes=100 ):
+        count = 0
         while True:
             pastes = self.get_pastes ()
 
@@ -86,8 +87,13 @@ class Crawler:
                     if paste_id not in self.prev_checked_ids:
                         self.check_paste ( paste_id )
                         time.sleep ( delay )
+                    count += 1
 
-                self.prev_checked_ids = self.new_checked_ids
+                if count == flush_after_x_refreshes:
+                    self.prev_checked_ids = self.new_checked_ids
+                    count = 0
+                else:
+                    self.prev_checked_ids += self.new_checked_ids
                 self.new_checked_ids = []
 
                 time.sleep ( refresh_rate )
