@@ -21,7 +21,7 @@ class Logger:
        'RESET' : '\033[0m'
     }
 
-    def log ( self, message, is_bold = False, color = '' ):
+    def log ( self, message, is_bold=False, color=''):
         prefix = ''
         if is_bold:
             prefix += self.shell_mod['BOLD']
