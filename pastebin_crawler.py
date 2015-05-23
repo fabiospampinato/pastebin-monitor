@@ -100,4 +100,4 @@ class Crawler:
 try:
     Crawler ().start ()
 except KeyboardInterrupt:
-    Logger ().log ( 'Bye! Hope you found what you were looking for :)', True );
+    Logger ().log ( 'Bye! Hope you found what you were looking for :)', True )
