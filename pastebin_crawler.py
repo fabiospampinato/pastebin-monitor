@@ -41,7 +41,10 @@ class Crawler:
     new_checked_ids = []
 
     regexes = [
-        r'(password|pass|pswd|passwd)\s?(:|=)' # Passwords
+        r'(password|pass|pswd|passwd|pwd|pass)',     # Passwords
+        r'(serial|cd-key|key|license)',              # Serials
+        r'(gmail.com|hotmail.com|live.com|yahoo)',   # Emails (FIXME: Get a decent list of these)
+        r'(hack|exploit|leak|usernames|)',           # 'other'
     ]
 
     def get_pastes ( self ):
@@ -72,7 +75,7 @@ class Crawler:
         with open ( 'matching_pastes.txt', 'a' ) as matching:
             matching.write ( time.strftime ( '%Y/%m/%d %H:%M:%S' ) + ' - ' + paste_url + '\n' )
 
-    def start ( self, refresh_rate = 30, delay = 1, ban_wait = 5 ):
+    def start ( self, refresh_rate = 30, delay = 0.1, ban_wait = 5 ):
         while True:
             pastes = self.get_pastes ()
 
