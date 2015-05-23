@@ -41,10 +41,10 @@ class Crawler:
     new_checked_ids = []
 
     regexes = [
-        r'(password|pass|pswd|passwd|pwd|pass)',     # Passwords
-        r'(serial|cd-key|key|license)',              # Serials
-        r'(gmail.com|hotmail.com|live.com|yahoo)',   # Emails (FIXME: Get a decent list of these)
-        r'(hack|exploit|leak|usernames|)',           # 'other'
+        [r'(password|pass|pswd|passwd|pwd|pass)','passwords.txt'],
+        [r'(serial|cd-key|key|license)','serials.txt'],
+        [r'(gmail.com|hotmail.com|live.com|yahoo)','mails.txt'],
+        [r'(hack|exploit|leak|usernames)','other.txt']
     ]
 
     def get_pastes ( self ):
@@ -61,18 +61,18 @@ class Crawler:
         paste_url = self.pastebin_url + paste_id
         paste_txt = PyQuery ( url = paste_url )('#paste_code').text()
 
-        for regex in self.regexes:
+        for regex,file in self.regexes:
 
             if re.match ( regex, paste_txt, re.IGNORECASE ):
-                Logger ().log ( 'Found a matching paste: ' + paste_url, True, 'CYAN' )
-                self.save_result ( paste_url )
+                Logger ().log ( 'Found a matching paste: ' + paste_url + '(' + file + ')', True, 'CYAN' )
+                self.save_result ( paste_url,file )
                 return True
             else:
                 Logger ().log ( 'Not matching paste: ' + paste_url )
                 return False
 
-    def save_result ( self, paste_url ):
-        with open ( 'matching_pastes.txt', 'a' ) as matching:
+    def save_result ( self, paste_url, file ):
+        with open ( file, 'a' ) as matching:
             matching.write ( self.get_timestamp() + ' - ' + paste_url + '\n' )
 
     def start ( self, refresh_rate = 30, delay = 0.1, ban_wait = 5 ):
