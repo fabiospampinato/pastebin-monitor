@@ -47,15 +47,23 @@ class Crawler:
         [r'(hack|exploit|leak|usernames)','other.txt']
     ]
 
+    def __init__(self):
+        self.OK = 1
+        self.ACCESS_DENIED = -1
+        self.CONNECTION_FAIL = -2
+
     def get_pastes ( self ):
         Logger ().log ( 'Getting pastes', True )
-        page = PyQuery ( url = self.pastes_url )
+        try:
+            page = PyQuery ( url = self.pastes_url )
+        except:
+            return self.CONNECTION_FAIL,None
         page_html = page.html ()
 
         if re.match ( r'Pastebin\.com - Access Denied Warning', page_html, re.IGNORECASE ):
-            return None
+            return self.ACCESS_DENIED,None
         else:
-            return page('.maintable img').next('a')
+            return self.OK,page('.maintable img').next('a')
 
     def check_paste ( self, paste_id ):
         paste_url = self.pastebin_url + paste_id
@@ -75,12 +83,12 @@ class Crawler:
         with open ( file, 'a' ) as matching:
             matching.write ( self.get_timestamp() + ' - ' + paste_url + '\n' )
 
-    def start ( self, refresh_rate = 30, delay = 0.1, ban_wait = 5, flush_after_x_refreshes=100 ):
+    def start ( self, refresh_rate = 30, delay = 0.1, ban_wait = 5, flush_after_x_refreshes=100, connection_timeout=60 ):
         count = 0
         while True:
-            pastes = self.get_pastes ()
+            status,pastes = self.get_pastes ()
 
-            if pastes:
+            if status == self.OK:
                 for paste in pastes:
                     paste_id = PyQuery ( paste ).attr('href')
                     self.new_checked_ids.append ( paste_id )
@@ -97,11 +105,15 @@ class Crawler:
                 self.new_checked_ids = []
 
                 time.sleep ( refresh_rate )
-            else:
-                Logger ().log ( 'Damn! It looks like you have been banned (probably temporarily)', True, 'RED' )
+            elif status == self.ACCESS_DENIED:
+                Logger ().log ( 'Damn! It looks like you have been banned (probably temporarily)', True, 'YELLOW' )
                 for n in range ( 0, ban_wait ):
                     Logger ().log ( 'Please wait ' + str ( ban_wait - n ) + ' minute' + ( 's' if ( ban_wait - n ) > 1 else '' ) )
                     time.sleep ( 60 )
+            elif status == self.CONNECTION_FAIL:
+                Logger().log ( 'Connection down. Waiting {:s} seconds and trying again'.format(connection_timeout), True, 'RED')
+                time.sleep(connection_timeout)
+
 
     def get_timestamp(self):
         return time.strftime('%Y/%m/%d %H:%M:%S')
