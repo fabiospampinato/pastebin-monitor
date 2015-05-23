@@ -8,6 +8,7 @@ from pyquery import PyQuery
 class Logger:
 
     shell_mod = {
+        '':'',
        'PURPLE' : '\033[95m',
        'CYAN' : '\033[96m',
        'DARKCYAN' : '\033[36m',
@@ -20,11 +21,10 @@ class Logger:
        'RESET' : '\033[0m'
     }
 
-    def log ( self, message, is_bold = False, color = False ):
+    def log ( self, message, is_bold = False, color = '' ):
         prefix = ''
         if is_bold:
             prefix += self.shell_mod['BOLD']
-        if color:
             prefix += self.shell_mod[color.upper()]
 
         suffix = self.shell_mod['RESET']
@@ -53,7 +53,7 @@ class Crawler:
         page_html = page.html ()
 
         if re.match ( r'Pastebin\.com - Access Denied Warning', page_html, re.IGNORECASE ):
-            return False
+            return None
         else:
             return page('.maintable img').next('a')
 
