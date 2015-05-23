@@ -40,9 +40,9 @@ class Crawler:
     prev_checked_ids = []
     new_checked_ids = []
 
-    regexes = (
+    regexes = [
         r'(password|pass|pswd|passwd)\s?(:|=)' # Passwords
-    )
+    ]
 
     def get_pastes ( self ):
         Logger ().log ( 'Getting pastes', True )
