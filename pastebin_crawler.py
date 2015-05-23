@@ -25,7 +25,7 @@ class Logger:
         prefix = ''
         if is_bold:
             prefix += self.shell_mod['BOLD']
-            prefix += self.shell_mod[color.upper()]
+        prefix += self.shell_mod[color.upper()]
 
         suffix = self.shell_mod['RESET']
 
@@ -73,7 +73,7 @@ class Crawler:
 
     def save_result ( self, paste_url ):
         with open ( 'matching_pastes.txt', 'a' ) as matching:
-            matching.write ( time.strftime ( '%Y/%m/%d %H:%M:%S' ) + ' - ' + paste_url + '\n' )
+            matching.write ( self.get_timestamp() + ' - ' + paste_url + '\n' )
 
     def start ( self, refresh_rate = 30, delay = 0.1, ban_wait = 5 ):
         while True:
@@ -96,6 +96,10 @@ class Crawler:
                 for n in range ( 0, ban_wait ):
                     Logger ().log ( 'Please wait ' + str ( ban_wait - n ) + ' minute' + ( 's' if ( ban_wait - n ) > 1 else '' ) )
                     time.sleep ( 60 )
+
+    def get_timestamp(self):
+        return time.strftime('%Y/%m/%d %H:%M:%S')
+
 
 try:
     Crawler ().start ()
