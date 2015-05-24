@@ -261,7 +261,7 @@ class Crawler:
 
         with open( directory + '/' + timestamp.replace('/','_').replace(':','_').replace(' ','__') + '_' + paste_id.replace('/','') + '.txt', mode='w' ) as paste:
             paste_txt = PyQuery(url=paste_url)('#paste_code').text()
-            paste.write(paste_txt)
+            paste.write(paste_txt + '\n')
 
 
     def start ( self, refresh_time = 30, delay = 1, ban_wait = 5, flush_after_x_refreshes=100, connection_timeout=60 ):
