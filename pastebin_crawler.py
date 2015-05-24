@@ -1,6 +1,5 @@
 #!/usr/bin/env python3
 import os
-
 import re
 import time
 
@@ -59,7 +58,7 @@ class Crawler:
         try:
             with open ( self.REGEXES_FILE, 'r') as f:
                 try:
-                    self.regexes = [ [ field.strip() for field in line.split(',')] for line in f.readlines() if line.strip() != '']
+                    self.regexes = [ [ field.strip() for field in line.split(',')] for line in f.readlines() if line.strip() != '' and not line.startswith('#')]
                 except:
                     Logger().fatal_error('Malformed regexes file. Format: regex_pattern,URL logging file, directory logging file.')
         except:

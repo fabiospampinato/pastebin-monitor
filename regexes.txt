@@ -1,4 +1,6 @@
+#Format:
+#regex , URL logging file path/name , directory to store pasties
 (password\b|pass\b|pswd\b|passwd\b|pwd\b|pass\b), passwords.txt, passwords
-(serial\b|cd-key\b|key\b|license\b), serials.txt, serials
-(gmail.com|hotmail.com|live.com|yahoo), mails.txt, mails
-(hack|exploit|leak|usernames),other.txt,other
+(serial\b|cd-key\b|key\b|license\b),              serials.txt,   serials
+(gmail.com|hotmail.com|live.com|yahoo),           mails.txt,     mails
+(hack|exploit|leak|usernames),                    other.txt,     other

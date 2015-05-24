@@ -1,6 +1,9 @@
 # Pastebin Crawler
 A simple Pastebin crawler which looks for interesting things and saves them to disk. Originally forked  from [https://github.com/FabioSpampinato/Pastebin-Crawler](https://github.com/FabioSpampinato/Pastebin-Crawler)
 
+## Dependencies
+* [PyQuery](https://pythonhosted.org/pyquery/)
+
 ## How it works
 The tool periodically checks for new pastes and analyzes it. If they match a given pattern, their URL is stored in a .txt file, and its content in a file under a predefined directory. For instance, if the paste matches a password it is placed in 'passwords.txt' and stored under 'passwords'.
  
@@ -11,9 +14,20 @@ The tool periodically checks for new pastes and analyzes it. If they match a giv
  * Ban wait time (time to wait if a ban is detected, in minutes)
  * Timeout time (time to wait until a new attempt is made if connection times out due to a bad connection, in seconds)
  * Number of refreshes between flushes (number of refreshes until past Pastes are cleared from memory)
+ * The regexes. See [Using your own regexes](#using-your-own-regexes)
+ 
+ ## Using your own regexes
+ Regexes are stored in the _regexes.txt_ file. It is trivial to modify this file and add new patterns to match.
+ 
+ 
+ The format is:
+ 
+    regex , URL logging file path/name , directory to store pasties
+      
+Examples:
 
-## Dependencies
-* [PyQuery](https://pythonhosted.org/pyquery/)
+    (password\b|pass\b|pswd\b|passwd\b|pwd\b|pass\b), passwords.txt, passwords
+    (serial\b|cd-key\b|key\b|license\b),              serials.txt,   serials
 
 ## And...
 More configurability and ease of use is coming soon! :)
