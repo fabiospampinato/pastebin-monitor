@@ -10,6 +10,10 @@ import urllib.request
 
 from pyquery import PyQuery
 
+
+def get_timestamp():
+    return time.strftime('%Y/%m/%d %H:%M:%S')
+
 def all_python_encodings():
      return ["ascii",
              "big5",
@@ -121,9 +125,12 @@ class Logger:
        'RESET' : '\033[0m'
     }
 
-    def log ( self, message, is_bold=False, color=''):
+    def log ( self, message, is_bold=False, color='', log_time=True):
         prefix = ''
         suffix = ''
+
+        if log_time:
+            prefix += '[{:s}] '.format(get_timestamp())
 
         if os.name == 'posix':
             if is_bold:
@@ -243,12 +250,8 @@ class Crawler:
             Logger ().log ( 'Error reading paste (probably a 404 or encoding issue).', True, 'YELLOW')
         return False
 
-
-    def get_timestamp(self):
-        return time.strftime('%Y/%m/%d %H:%M:%S')
-
     def save_result ( self, paste_url, paste_id, file, directory ):
-        timestamp = self.get_timestamp()
+        timestamp = get_timestamp()
         with open ( file, 'a' ) as matching:
             matching.write ( timestamp + ' - ' + paste_url + '\n' )
 
