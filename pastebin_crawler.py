@@ -4,6 +4,8 @@ import os
 import re
 import time
 import sys
+import urllib
+import urllib.request
 
 from pyquery import PyQuery
 
@@ -180,6 +182,13 @@ class Crawler:
         except:
             return self.CONNECTION_FAIL,None
 
+
+        """
+        There are a set of encoding issues which, coupled with some bugs in etree (such as in the Raspbian packages) can
+        trigger encoding exceptions here. As a workaround, we try every possible encoding first, and even if that fails,
+        we resort to a very hacky workaround whereby we manually get the page and attempt to encode it as utf-8. It's
+        ugly, but it works for now.
+        """
         try:
             page_html = page.html ()
         except:
@@ -192,7 +201,13 @@ class Crawler:
                 except:
                     pass
             if not worked:
-                return self.OTHER_ERROR, None
+                # One last try...
+                try:
+                    f = urllib.request.urlopen(Crawler.PASTES_URL)
+                    page_html = PyQuery(str(f.read()).encode('utf8')).html()
+                    f.close()
+                except:
+                    return self.OTHER_ERROR, None
         if re.match ( r'Pastebin\.com - Access Denied Warning', page_html, re.IGNORECASE ) or 'blocked your IP' in page_html:
             return self.ACCESS_DENIED,None
         else:
@@ -200,14 +215,17 @@ class Crawler:
 
     def check_paste ( self, paste_id ):
         paste_url = self.PASTEBIN_URL + paste_id
-        paste_txt = PyQuery ( url = paste_url )('#paste_code').text()
+        try:
+            paste_txt = PyQuery ( url = paste_url )('#paste_code').text()
 
-        for regex,file,directory in self.regexes:
-            if re.match ( regex, paste_txt, re.IGNORECASE ):
-                Logger ().log ( 'Found a matching paste: ' + paste_url + ' (' + file + ')', True, 'CYAN' )
-                self.save_result ( paste_url,paste_id,file,directory )
-                return True
-        Logger ().log ( 'Not matching paste: ' + paste_url )
+            for regex,file,directory in self.regexes:
+                if re.match ( regex, paste_txt, re.IGNORECASE ):
+                    Logger ().log ( 'Found a matching paste: ' + paste_url + ' (' + file + ')', True, 'CYAN' )
+                    self.save_result ( paste_url,paste_id,file,directory )
+                    return True
+            Logger ().log ( 'Not matching paste: ' + paste_url )
+        except:
+            Logger ().log ( 'Error reading paste (probably a 404 or encoding issue).', True, 'YELLOW')
         return False
 
 
