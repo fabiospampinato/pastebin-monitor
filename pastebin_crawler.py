@@ -60,7 +60,7 @@ class Crawler:
             return self.CONNECTION_FAIL,None
         page_html = page.html ()
 
-        if re.match ( r'Pastebin\.com - Access Denied Warning', page_html, re.IGNORECASE ):
+        if re.match ( r'Pastebin\.com - Access Denied Warning', page_html, re.IGNORECASE ) or 'blocked your IP' in page_html:
             return self.ACCESS_DENIED,None
         else:
             return self.OK,page('.maintable img').next('a')
