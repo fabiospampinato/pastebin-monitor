@@ -16,7 +16,7 @@ The tool periodically checks for new pastes and analyzes it. If they match a giv
  * Number of refreshes between flushes (number of refreshes until past Pastes are cleared from memory)
  * The regexes. See [Using your own regexes](#using-your-own-regexes)
  
- ## Using your own regexes
+## Using your own regexes
  Regexes are stored in the _regexes.txt_ file. It is trivial to modify this file and add new patterns to match.
  
  
