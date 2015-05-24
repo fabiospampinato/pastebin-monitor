@@ -286,7 +286,18 @@ class Crawler:
                 Logger().log('Unknown error. Maybe an encoding problem? Trying again.'.format(connection_timeout), True,'RED')
                 time.sleep(1)
 
+def parse_input():
+    parser = OptionParser()
+    parser.add_option('-r', '--refresh-time', help='Set the refresh time (default: 30)', dest='refresh_time', type='int', default=30)
+    parser.add_option('-d', '--delay-time', help='Set the delay time (default: 1)', dest='delay', type='float', default=1)
+    parser.add_option('-b', '--ban-wait-time', help='Set the ban wait time (default: 5)', dest='ban_wait', type='int', default=5)
+    parser.add_option('-f', '--flush-after-x-refreshes', help='Set the number of refreshes after which memory is flushed (default: 100)', dest='flush_after_x_refreshes', type='int', default=100)
+    parser.add_option('-c', '--connection-timeout', help='Set the connection timeout waiting time (default: 60)', dest='connection_timeout', type='float', default=60)
+    (options, args) = parser.parse_args()
+    return options.refresh_time, options.delay, options.ban_wait, options.flush_after_x_refreshes, options.connection_timeout
+
+
 try:
-    Crawler ().start ()
+    Crawler ().start (*parse_input())
 except KeyboardInterrupt:
     Logger ().log ( 'Bye! Hope you found what you were looking for :)', True )
