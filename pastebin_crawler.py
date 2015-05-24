@@ -53,6 +53,7 @@ class Crawler:
     OK = 1
     ACCESS_DENIED = -1
     CONNECTION_FAIL = -2
+    OTHER_ERROR = -2
 
     prev_checked_ids = []
     new_checked_ids = []
@@ -83,7 +84,14 @@ class Crawler:
             page = PyQuery ( url = self.PASTES_URL )
         except:
             return self.CONNECTION_FAIL,None
-        page_html = page.html ()
+
+        try:
+            page_html = page.html ()
+        except:
+            try:
+                page_html = page.html(encoding='ascii')
+            except:
+                return self.OTHER_ERROR, None
 
         if re.match ( r'Pastebin\.com - Access Denied Warning', page_html, re.IGNORECASE ) or 'blocked your IP' in page_html:
             return self.ACCESS_DENIED,None
@@ -156,6 +164,9 @@ class Crawler:
             elif status == self.CONNECTION_FAIL:
                 Logger().log ( 'Connection down. Waiting {:s} seconds and trying again'.format(connection_timeout), True, 'RED')
                 time.sleep(connection_timeout)
+            elif status == self.OTHER_ERROR:
+                Logger().log('Unknown error. Maybe an encoding problem? Trying again.'.format(connection_timeout), True,'RED')
+                time.sleep(1)
 
 try:
     Crawler ().start ()
