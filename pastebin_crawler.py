@@ -114,7 +114,7 @@ class Crawler:
         except:
             pass
 
-        with open( directory + '/' + timestamp.replace('/','_').replace(' ','_').replace(' ','__') + '_' + paste_id.replace('/','') + '.txt', mode='w' ) as paste:
+        with open( directory + '/' + timestamp.replace('/','_').replace(':','_').replace(' ','__') + '_' + paste_id.replace('/','') + '.txt', mode='w' ) as paste:
             paste_txt = PyQuery(url=paste_url)('#paste_code').text()
             paste.write(paste_txt)
 
