@@ -14,7 +14,7 @@ The tool periodically checks for new pastes and analyzes it. If they match a giv
  * Ban wait time (time to wait if a ban is detected, in minutes)
  * Timeout time (time to wait until a new attempt is made if connection times out due to a bad connection, in seconds)
  * Number of refreshes between flushes (number of refreshes until past Pastes are cleared from memory)
- * The regexes. See [Using your own regexes](#using-your-own-regexes)
+ * The regexes. See [Using your own regexes](#user-content-using-your-own-regexes)
  
 ## Using your own regexes
  Regexes are stored in the _regexes.txt_ file. It is trivial to modify this file and add new patterns to match.
