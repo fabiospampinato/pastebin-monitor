@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from math import ceil
 import os
 import re
 import time
@@ -139,7 +140,7 @@ class Crawler:
                 self.new_checked_ids = []
 
                 elapsed_time = time.time() - start_time
-                sleep_time = max(0,(refresh_time - elapsed_time))
+                sleep_time = ceil(max(0,(refresh_time - elapsed_time)))
                 if sleep_time > 0:
                     Logger().log('Waiting {:d} seconds to refresh...'.format(sleep_time), True)
                     time.sleep ( sleep_time )
