@@ -5,7 +5,7 @@ A simple Pastebin crawler which looks for interesting things and saves them to d
 * [PyQuery](https://pythonhosted.org/pyquery/)
 
 ## How it works
-The tool periodically checks for new pastes and analyzes it. If they match a given pattern, their URL is stored in a .txt file, and its content in a file under a predefined directory. For instance, if the paste matches a password it is placed in 'passwords.txt' and stored under 'passwords'.
+The tool periodically checks for new pastes and analyzes them. If they match a given pattern, their URL is stored in a .txt file, and their content in a file under a predefined directory. For instance, if the paste matches a password it can be placed in 'passwords.txt' and stored under 'passwords'.
  
  The following parameters are configurable:
  

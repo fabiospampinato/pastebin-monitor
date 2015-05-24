@@ -121,6 +121,7 @@ class Crawler:
         while True:
             status,pastes = self.get_pastes ()
 
+            start_time = time.time()
             if status == self.OK:
                 for paste in pastes:
                     paste_id = PyQuery ( paste ).attr('href')
@@ -137,8 +138,11 @@ class Crawler:
                     self.prev_checked_ids += self.new_checked_ids
                 self.new_checked_ids = []
 
-                Logger().log('Waiting {:d} seconds to refresh...'.format(refresh_time), True)
-                time.sleep ( refresh_time )
+                elapsed_time = time.time() - start_time
+                sleep_time = max(0,(refresh_time - elapsed_time))
+                if sleep_time > 0:
+                    Logger().log('Waiting {:d} seconds to refresh...'.format(refresh_time), True)
+                    time.sleep ( refresh_time )
             elif status == self.ACCESS_DENIED:
                 Logger ().log ( 'Damn! It looks like you have been banned (probably temporarily)', True, 'YELLOW' )
                 for n in range ( 0, ban_wait ):
