@@ -1,5 +1,6 @@
 #!/usr/bin/env python3
 from math import ceil
+from optparse import OptionParser
 import os
 import re
 import time
@@ -164,8 +165,12 @@ class Crawler:
                     # In case commas exist in the regexes...merge everything.
                     for i in range(len(self.regexes)):
                         self.regexes[i] = [','.join(self.regexes[i][:-2])] + self.regexes[i][-2:]
+                except KeyboardInterrupt:
+                    raise
                 except:
                     Logger().fatal_error('Malformed regexes file. Format: regex_pattern,URL logging file, directory logging file.')
+        except KeyboardInterrupt:
+            raise
         except:
             Logger().fatal_error('{:s} not found or not acessible.'.format(self.REGEXES_FILE))
 
@@ -179,6 +184,8 @@ class Crawler:
         Logger ().log ( 'Getting pastes', True )
         try:
             page = PyQuery ( url = self.PASTES_URL )
+        except KeyboardInterrupt:
+            raise
         except:
             return self.CONNECTION_FAIL,None
 
@@ -191,6 +198,8 @@ class Crawler:
         """
         try:
             page_html = page.html ()
+        except KeyboardInterrupt:
+            raise
         except:
             worked = False
             for enc in all_python_encodings():
@@ -198,6 +207,8 @@ class Crawler:
                     page_html = page.html(encoding=enc)
                     worked = True
                     break
+                except KeyboardInterrupt:
+                    raise
                 except:
                     pass
             if not worked:
@@ -206,6 +217,8 @@ class Crawler:
                     f = urllib.request.urlopen(Crawler.PASTES_URL)
                     page_html = PyQuery(str(f.read()).encode('utf8')).html()
                     f.close()
+                except KeyboardInterrupt:
+                    raise
                 except:
                     return self.OTHER_ERROR, None
         if re.match ( r'Pastebin\.com - Access Denied Warning', page_html, re.IGNORECASE ) or 'blocked your IP' in page_html:
@@ -224,6 +237,8 @@ class Crawler:
                     self.save_result ( paste_url,paste_id,file,directory )
                     return True
             Logger ().log ( 'Not matching paste: ' + paste_url )
+        except KeyboardInterrupt:
+            raise
         except:
             Logger ().log ( 'Error reading paste (probably a 404 or encoding issue).', True, 'YELLOW')
         return False
@@ -239,6 +254,8 @@ class Crawler:
 
         try:
             os.mkdir(directory)
+        except KeyboardInterrupt:
+            raise
         except:
             pass
 
