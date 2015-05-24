@@ -188,6 +188,7 @@ class Crawler:
                 try:
                     page_html = page.html(encoding=enc)
                     worked = True
+                    break
                 except:
                     pass
             if not worked:
