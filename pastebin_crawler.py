@@ -83,6 +83,10 @@ class Crawler:
                 Logger ().log ( 'Not matching paste: ' + paste_url )
                 return False
 
+
+    def get_timestamp(self):
+        return time.strftime('%Y/%m/%d %H:%M:%S')
+
     def save_result ( self, paste_url, paste_id, file, directory ):
         timestamp = self.get_timestamp()
         with open ( file, 'a' ) as matching:
@@ -129,10 +133,6 @@ class Crawler:
             elif status == self.CONNECTION_FAIL:
                 Logger().log ( 'Connection down. Waiting {:s} seconds and trying again'.format(connection_timeout), True, 'RED')
                 time.sleep(connection_timeout)
-
-
-    def get_timestamp(self):
-        return time.strftime('%Y/%m/%d %H:%M:%S')
 
 try:
     Crawler ().start ()
