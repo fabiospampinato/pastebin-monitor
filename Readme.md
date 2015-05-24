@@ -19,6 +19,27 @@ The tool periodically checks for new pastes and analyzes them. If they match a g
  * Number of refreshes between flushes (number of refreshes until past Pastes are cleared from memory)
  * The regexes. See [Using your own regexes](#user-content-using-your-own-regexes)
  
+## Command line options
+
+```
+./pastebin_crawler.py -h
+Usage: pastebin_crawler.py [options]
+
+Options:
+  -h, --help            show this help message and exit
+  -r REFRESH_TIME, --refresh-time=REFRESH_TIME
+                        Set the refresh time (default: 30)
+  -d DELAY, --delay-time=DELAY
+                        Set the delay time (default: 1)
+  -b BAN_WAIT, --ban-wait-time=BAN_WAIT
+                        Set the ban wait time (default: 5)
+  -f FLUSH_AFTER_X_REFRESHES, --flush-after-x-refreshes=FLUSH_AFTER_X_REFRESHES
+                        Set the number of refreshes after which memory is
+                        flushed (default: 100)
+  -c CONNECTION_TIMEOUT, --connection-timeout=CONNECTION_TIMEOUT
+                        Set the connection timeout waiting time (default: 60)
+```
+ 
 ## Using your own regexes
  Regexes are stored in the _regexes.txt_ file. It is trivial to modify this file and add new patterns to match.
  
@@ -33,6 +54,3 @@ Examples:
     (serial\b|cd-key\b|key\b|license\b),              serials.txt,   serials
 
 **And yes, you can use commas in the regex. Just don't do it in filename or directory. Really, _don't_!**
-
-## And...
-More configurability and ease of use is coming soon! :)
