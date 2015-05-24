@@ -29,5 +29,7 @@ Examples:
     (password\b|pass\b|pswd\b|passwd\b|pwd\b|pass\b), passwords.txt, passwords
     (serial\b|cd-key\b|key\b|license\b),              serials.txt,   serials
 
+**And yes, you can use commas in the regex. Just don't do it in filename or directory. Really, _don't_!**
+
 ## And...
 More configurability and ease of use is coming soon! :)

@@ -60,6 +60,10 @@ class Crawler:
             with open ( self.REGEXES_FILE, 'r') as f:
                 try:
                     self.regexes = [ [ field.strip() for field in line.split(',')] for line in f.readlines() if line.strip() != '' and not line.startswith('#')]
+
+                    # In case commas exist in the regexes...merge everything.
+                    for i in range(len(self.regexes)):
+                        self.regexes[i] = [','.join(self.regexes[i][:-2])] + self.regexes[i][-2:]
                 except:
                     Logger().fatal_error('Malformed regexes file. Format: regex_pattern,URL logging file, directory logging file.')
         except:
