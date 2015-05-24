@@ -3,6 +3,7 @@ from math import ceil
 import os
 import re
 import time
+import sys
 
 from pyquery import PyQuery
 
@@ -35,6 +36,7 @@ class Logger:
 
         message = prefix + message + suffix
         print ( message )
+        sys.stdout.flush()
 
     def error(self, err):
         self.log(err, True, 'RED')

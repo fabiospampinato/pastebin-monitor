@@ -4,6 +4,7 @@ A simple Pastebin crawler which looks for interesting things and saves them to d
 ## Dependencies
 * [PyQuery](https://pythonhosted.org/pyquery/)
 * Python 3
+
 Make sure you use PyQuery for Python 3!
 
 ## How it works
