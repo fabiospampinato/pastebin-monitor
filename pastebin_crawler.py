@@ -36,30 +36,45 @@ class Logger:
         message = prefix + message + suffix
         print ( message )
 
+    def error(self, err):
+        self.log(err, True, 'RED')
+
+    def fatal_error(self, err):
+        self.error(err)
+        exit()
+
 class Crawler:
 
-    pastebin_url = 'http://pastebin.com'
-    pastes_url = pastebin_url + '/archive'
+    PASTEBIN_URL = 'http://pastebin.com'
+    PASTES_URL = PASTEBIN_URL + '/archive'
+    REGEXES_FILE = 'regexes.txt'
+    OK = 1
+    ACCESS_DENIED = -1
+    CONNECTION_FAIL = -2
 
     prev_checked_ids = []
     new_checked_ids = []
 
-    regexes = [
-        [r'(password\b|pass\b|pswd\b|passwd\b|pwd\b|pass\b)','passwords.txt','passwords'],
-        [r'(serial\b|cd-key\b|key\b|license\b)','serials.txt','serials'],
-        [r'(gmail.com|hotmail.com|live.com|yahoo)','mails.txt','mails'],
-        [r'(hack|exploit|leak|usernames)','other.txt','other']
-    ]
+    def read_regexes(self):
+        try:
+            with open ( self.REGEXES_FILE, 'r') as f:
+                try:
+                    self.regexes = [ [ field.strip() for field in line.split(',')] for line in f.readlines() if line.strip() != '']
+                except:
+                    Logger().fatal_error('Malformed regexes file. Format: regex_pattern,URL logging file, directory logging file.')
+        except:
+            Logger().fatal_error('{:s} not found or not acessible.'.format(self.REGEXES_FILE))
+
 
     def __init__(self):
-        self.OK = 1
-        self.ACCESS_DENIED = -1
-        self.CONNECTION_FAIL = -2
+        self.read_regexes()
+
+
 
     def get_pastes ( self ):
         Logger ().log ( 'Getting pastes', True )
         try:
-            page = PyQuery ( url = self.pastes_url )
+            page = PyQuery ( url = self.PASTES_URL )
         except:
             return self.CONNECTION_FAIL,None
         page_html = page.html ()
@@ -70,7 +85,7 @@ class Crawler:
             return self.OK,page('.maintable img').next('a')
 
     def check_paste ( self, paste_id ):
-        paste_url = self.pastebin_url + paste_id
+        paste_url = self.PASTEBIN_URL + paste_id
         paste_txt = PyQuery ( url = paste_url )('#paste_code').text()
 
         for regex,file,directory in self.regexes:
