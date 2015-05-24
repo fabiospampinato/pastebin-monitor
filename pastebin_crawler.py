@@ -24,11 +24,14 @@ class Logger:
 
     def log ( self, message, is_bold=False, color=''):
         prefix = ''
-        if is_bold:
-            prefix += self.shell_mod['BOLD']
-        prefix += self.shell_mod[color.upper()]
+        suffix = ''
 
-        suffix = self.shell_mod['RESET']
+        if os.name == 'posix':
+            if is_bold:
+                prefix += self.shell_mod['BOLD']
+            prefix += self.shell_mod[color.upper()]
+
+            suffix = self.shell_mod['RESET']
 
         message = prefix + message + suffix
         print ( message )
