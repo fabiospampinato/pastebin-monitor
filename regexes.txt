@@ -1,7 +1,7 @@
 #Format:
 #regex , URL logging file path/name , directory to store pasties
 (password\b|pass\b|pswd\b|passwd\b|pwd\b|pass\b), passwords.txt,  passwords
-(serial\b|cd-key\b|key\b|license\b),              serials.txt,    serials
+(serial|cd-key|key\b|license),              serials.txt,    serials
 [a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?,           mails.txt,      mails
 (hack|exploit|leak|usernames),                    other.txt,      other
 id=,                                              sql_inject.txt, sql_inject

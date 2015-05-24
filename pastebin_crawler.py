@@ -93,14 +93,12 @@ class Crawler:
         paste_txt = PyQuery ( url = paste_url )('#paste_code').text()
 
         for regex,file,directory in self.regexes:
-
             if re.match ( regex, paste_txt, re.IGNORECASE ):
                 Logger ().log ( 'Found a matching paste: ' + paste_url + ' (' + file + ')', True, 'CYAN' )
                 self.save_result ( paste_url,paste_id,file,directory )
                 return True
-            else:
-                Logger ().log ( 'Not matching paste: ' + paste_url )
-                return False
+        Logger ().log ( 'Not matching paste: ' + paste_url )
+        return False
 
 
     def get_timestamp(self):
@@ -116,7 +114,7 @@ class Crawler:
         except:
             pass
 
-        with open( directory + '/' + timestamp.replace('/','_') + paste_id + '.txt', 'w' ) as paste:
+        with open( directory + '/' + timestamp.replace('/','_').replace(' ','_').replace(' ','__') + '_' + paste_id.replace('/','') + '.txt', mode='w' ) as paste:
             paste_txt = PyQuery(url=paste_url)('#paste_code').text()
             paste.write(paste_txt)
 
