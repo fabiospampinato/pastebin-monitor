@@ -98,7 +98,7 @@ class Crawler:
             paste.write(paste_txt)
 
 
-    def start ( self, refresh_rate = 30, delay = 1, ban_wait = 5, flush_after_x_refreshes=100, connection_timeout=60 ):
+    def start ( self, refresh_time = 30, delay = 1, ban_wait = 5, flush_after_x_refreshes=100, connection_timeout=60 ):
         count = 0
         while True:
             status,pastes = self.get_pastes ()
@@ -119,8 +119,8 @@ class Crawler:
                     self.prev_checked_ids += self.new_checked_ids
                 self.new_checked_ids = []
 
-                Logger().log('Waiting {:d} seconds to refresh...'.format(refresh_rate), True)
-                time.sleep ( refresh_rate )
+                Logger().log('Waiting {:d} seconds to refresh...'.format(refresh_time), True)
+                time.sleep ( refresh_time )
             elif status == self.ACCESS_DENIED:
                 Logger ().log ( 'Damn! It looks like you have been banned (probably temporarily)', True, 'YELLOW' )
                 for n in range ( 0, ban_wait ):
